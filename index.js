@@ -2,6 +2,7 @@ const width = 28
 const grid = document.querySelector('.grid')
 const scoreDisplay = document.getElementById('score')
 let squares = []
+let score = 0
 
 // 0 - pac-dots
 // 1 - wall
@@ -68,6 +69,8 @@ function createBoard() {
             squares[i].classList.add("pac-dot")
         } else if (layout[i] === 1) {
             squares[i].classList.add("wall")
+        } else if (layout[i] === 2) {
+            squares[i].classList.add("ghost-lair")
         } else if (layout[i] === 3) {
             squares[i].classList.add("power-pellet")
         }
@@ -92,6 +95,7 @@ function control(e) {
         case 40:
             console.log("down pressed")
             if (!squares[pacmanCurrentIndex + width].classList.contains("wall") &&
+                !squares[pacmanCurrentIndex + width].classList.contains("ghost-lair") &&
                 pacmanCurrentIndex + width < width * width
             )
                 pacmanCurrentIndex += width
@@ -99,7 +103,7 @@ function control(e) {
 
         case 38:
             console.log("up pressed")
-            if (!squares[pacmanCurrentIndex - 28].classList.contains("wall") &&
+            if (!squares[pacmanCurrentIndex - width].classList.contains("wall") &&
                 pacmanCurrentIndex - 28 >= 0
             )
                 pacmanCurrentIndex -= width
@@ -111,6 +115,10 @@ function control(e) {
                 pacmanCurrentIndex % width !== 0
             )
                 pacmanCurrentIndex -= 1
+            // shortcut
+            if (pacmanCurrentIndex === 392) {
+                pacmanCurrentIndex = 419
+            }
             break
 
         case 39:
@@ -119,9 +127,21 @@ function control(e) {
                 pacmanCurrentIndex % width < width - 1
             )
                 pacmanCurrentIndex += 1
+            // shortcut
+            if (pacmanCurrentIndex === 419) {
+                pacmanCurrentIndex = 392
+            }
             break
     }
     squares[pacmanCurrentIndex].classList.add("pacman")
+    pacDotEaten()
 }
 document.addEventListener("keydown", control)
 
+function pacDotEaten() {
+    if (squares[pacmanCurrentIndex].classList.contains("pac-dot")) {
+        squares[pacmanCurrentIndex].classList.remove("pac-dot")
+        score += 1
+        scoreDisplay.innerHTML = score
+    }
+}
