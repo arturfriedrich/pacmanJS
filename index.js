@@ -87,20 +87,41 @@ squares[pacmanCurrentIndex].classList.add("pacman")
 // down - 40
 
 function control(e) {
+    squares[pacmanCurrentIndex].classList.remove("pacman")
     switch (e.keyCode) {
         case 40:
             console.log("down pressed")
+            if (!squares[pacmanCurrentIndex + width].classList.contains("wall") &&
+                pacmanCurrentIndex + width < width * width
+            )
+                pacmanCurrentIndex += width
             break
+
         case 38:
             console.log("up pressed")
+            if (!squares[pacmanCurrentIndex - 28].classList.contains("wall") &&
+                pacmanCurrentIndex - 28 >= 0
+            )
+                pacmanCurrentIndex -= width
             break
+
         case 37:
             console.log("left pressed")
+            if (!squares[pacmanCurrentIndex - 1].classList.contains("wall") &&
+                pacmanCurrentIndex % width !== 0
+            )
+                pacmanCurrentIndex -= 1
             break
-        case 49:
+
+        case 39:
             console.log("right pressed")
+            if (!squares[pacmanCurrentIndex + 1].classList.contains("wall") &&
+                pacmanCurrentIndex % width < width - 1
+            )
+                pacmanCurrentIndex += 1
             break
     }
+    squares[pacmanCurrentIndex].classList.add("pacman")
 }
 document.addEventListener("keydown", control)
 
