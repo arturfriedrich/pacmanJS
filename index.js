@@ -76,3 +76,31 @@ function createBoard() {
 
 createBoard()
 
+
+// starting position of pacman
+let pacmanCurrentIndex = 545
+squares[pacmanCurrentIndex].classList.add("pacman")
+
+// left - 37
+// up key - 38
+// right - 39
+// down - 40
+
+function control(e) {
+    switch (e.keyCode) {
+        case 40:
+            console.log("down pressed")
+            break
+        case 38:
+            console.log("up pressed")
+            break
+        case 37:
+            console.log("left pressed")
+            break
+        case 49:
+            console.log("right pressed")
+            break
+    }
+}
+document.addEventListener("keydown", control)
+
