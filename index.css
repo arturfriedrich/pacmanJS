@@ -1,0 +1,19 @@
+html, body {
+    margin: 10;
+    padding: 10;
+    font-family: 'Roboto', sans-serif;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    width: 420px;
+    height: 420px;
+    border: solid black;
+}
+
+.grid div {
+    width: 15px;
+    height: 15px;
+    background-color: blue;
+}
