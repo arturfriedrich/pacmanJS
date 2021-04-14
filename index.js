@@ -1,14 +1,14 @@
 // dolgok amiket még csinálni akarok
 // - ghost AI fejlesztés
 // - pacman folyamatos mozgás
-// - CSS fejlesztés: középre mindent, game over és win screen
 
 const width = 28
 const grid = document.querySelector('.grid')
 const scoreDisplay = document.getElementById('score')
 let squares = []
 let score = 0
-const pacmanTimerID = 350
+let pacmanTimerId = NaN
+const pacmanSpeed = 350
 
 // 0 - pac-dots
 // 1 - wall
@@ -91,6 +91,17 @@ function control(e) {
                 pacmanCurrentIndex + width < width * width
             )
                 pacmanCurrentIndex += width
+
+            pacmanTimerId = setInterval(function () {
+                // if the next square does NOT contain a wall and does not contain a ghost
+                if (
+                    !squares[pacmanCurrentIndex + direction].classList.contains("wall")
+                ) {
+                    // add direction to current index
+                    pacmanCurrentIndex += width
+                    // add ghost class
+                }
+            }, pacmanSpeed)
             break
 
         case 38:
@@ -107,6 +118,7 @@ function control(e) {
                 pacmanCurrentIndex % width !== 0
             )
                 pacmanCurrentIndex -= 1
+
 
             // shortcut
             if (pacmanCurrentIndex === 392) {
@@ -134,6 +146,7 @@ function control(e) {
     checkForGameOver()
 }
 document.addEventListener("keydown", control)
+
 
 function pacDotEaten() {
     if (squares[pacmanCurrentIndex].classList.contains("pac-dot")) {
@@ -231,6 +244,32 @@ function moveGhosts(ghost) {
     }, ghost.speed)
 
 }
+
+const pacmanDirections = [+1, -1, +width, -width]
+
+function movePacman() {
+    const directions = [+1, -1, +width, -width]
+    let direction = directions[Math.floor(Math.random() * directions.length)]
+
+    pacmanTimerId = setInterval(function () {
+        // if the next square does NOT contain a wall and does not contain a ghost
+        if (
+            !squares[pacmanCurrentIndex + direction].classList.contains("wall")
+        ) {
+            // remove any ghost
+            squares[pacmanCurrentIndex].classList.remove("pacman")
+            // add direction to current index
+            pacmanCurrentIndex += direction
+            // add ghost class
+            squares[pacmanCurrentIndex].classList.add("pacman")
+        } else direction = directions[Math.floor(Math.random() * directions.length)]
+        powerPelletEaten()
+        checkForWin()
+        checkForGameOver()
+    }, pacmanSpeed)
+
+}
+// movePacman()
 
 // check for game over
 function checkForGameOver() {
