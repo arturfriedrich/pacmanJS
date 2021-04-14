@@ -217,6 +217,18 @@ function moveGhosts(ghost) {
             squares[ghost.currentIndex].classList.add("scared-ghost")
         }
 
+        // if the ghost is scared and pacman is on it
+        if (ghost.isScared && squares[ghost.currentIndex].classList.contains("pacman")) {
+            // remove classname - ghost.className, "ghost", "scared-ghost"
+            squares[ghost.currentIndex].classList.remove(ghost.className, "ghost", "scared-ghost")
+            // change ghosts currentIndex back to startIndex
+            ghost.currentIndex = ghost.startIndex
+            //add a score of 100
+            score += 100
+            // readd classname of ghost.className and "ghost" to the new position
+            squares[ghost.currentIndex].classList.add("ghost")
+        }
+
     }, ghost.speed)
 
 }
