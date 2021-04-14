@@ -1,28 +1,20 @@
+// dolgok amiket még csinálni akarok
+// - ghost AI fejlesztés
+// - pacman folyamatos mozgás
+// - CSS fejlesztés: középre mindent, game over és win screen
+
 const width = 28
 const grid = document.querySelector('.grid')
 const scoreDisplay = document.getElementById('score')
 let squares = []
 let score = 0
+const pacmanTimerID = 350
 
 // 0 - pac-dots
 // 1 - wall
 // 2 - ghost-lair
 // 3 - power-pellet
 // 4 - empty
-
-
-/* I made my layout using Microsoft Excel, then I exported the excel sheet in .txt format
-   and spaced out with tabulators. I wrote a python program to change the tabulators to
-   commas. Here is the python program:
-
-   text = open("your-sheet.txt")
-
-    for num in text:
-        num = num.strip().split()
-        num = list(map(int, num))
-        print(num)
-
-    text.close() */
 
 const layout = [
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -115,6 +107,7 @@ function control(e) {
                 pacmanCurrentIndex % width !== 0
             )
                 pacmanCurrentIndex -= 1
+
             // shortcut
             if (pacmanCurrentIndex === 392) {
                 pacmanCurrentIndex = 419
@@ -127,6 +120,7 @@ function control(e) {
                 pacmanCurrentIndex % width < width - 1
             )
                 pacmanCurrentIndex += 1
+
             // shortcut
             if (pacmanCurrentIndex === 419) {
                 pacmanCurrentIndex = 392
@@ -136,6 +130,8 @@ function control(e) {
     squares[pacmanCurrentIndex].classList.add("pacman")
     pacDotEaten()
     powerPelletEaten()
+    checkForWin()
+    checkForGameOver()
 }
 document.addEventListener("keydown", control)
 
@@ -189,6 +185,7 @@ ghosts.forEach(ghost => {
     squares[ghost.currentIndex].classList.add(ghost.className)
     squares[ghost.currentIndex].classList.add("ghost")
 })
+
 // move the ghosts
 ghosts.forEach(ghost => moveGhosts(ghost))
 
@@ -228,7 +225,38 @@ function moveGhosts(ghost) {
             // readd classname of ghost.className and "ghost" to the new position
             squares[ghost.currentIndex].classList.add("ghost")
         }
-
+        powerPelletEaten()
+        checkForWin()
+        checkForGameOver()
     }, ghost.speed)
 
+}
+
+// check for game over
+function checkForGameOver() {
+    //if the square pacman is in contains a ghost AND the square does NOT contain a scared ghost 
+    if (squares[pacmanCurrentIndex].classList.contains("ghost") &&
+        !squares[pacmanCurrentIndex].classList.contains("scared-ghost")) {
+        //for each ghost - we need to stop it moving
+        ghosts.forEach(ghost => clearInterval(ghost.timerId))
+        //remove eventlistener from our control function
+        document.removeEventListener("keydown", control)
+        //tell user the game is over
+        scoreDisplay.innerHTML = score
+        document.getElementById("overlay-gameover").style.display = "block"
+    }
+
+}
+
+// check for win
+function checkForWin() {
+    if (score >= 286) {
+        //stop each ghost
+        ghosts.forEach(ghost => clearInterval(ghost.timerId))
+        //remove the eventListener for the control function
+        document.removeEventListener("keydown", control)
+        //tell our user we have won
+        scoreDisplay.innerHTML = score
+        document.getElementById("overlay-win").style.display = "block"
+    }
 }

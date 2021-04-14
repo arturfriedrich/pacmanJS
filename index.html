@@ -5,7 +5,18 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     </head>
     <body>
-        <h1>Score: <span id="score"></span></h1>
+        <div id="overlay-gameover">
+            <div id="modal-gameover">
+                <h1>GAME OVER</h1>
+            </div>
+        </div>
+        <div id="overlay-win">
+            <div id="modal-win">
+                <h1>YOU WON</h1>
+            </div>
+        </div>
+        <h1>Pacman</h1>
+        <h2>Score: <span id="score"></span></h2>
         <div class="grid"></div>
         <script src="./index.js"></script>
     </body>
