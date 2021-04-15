@@ -1,14 +1,9 @@
-// dolgok amiket még csinálni akarok
-// - ghost AI fejlesztés
-// - pacman folyamatos mozgás
-
 const width = 28
 const grid = document.querySelector('.grid')
 const scoreDisplay = document.getElementById('score')
 let squares = []
 let score = 0
-let pacmanTimerId = NaN
-const pacmanSpeed = 350
+let pacdot = 0
 
 // 0 - pac-dots
 // 1 - wall
@@ -57,6 +52,7 @@ function createBoard() {
         // put square in squeres array
         squares.push(square)
 
+        // adding classes to the specific squares
         if (layout[i] === 0) {
             squares[i].classList.add("pac-dot")
         } else if (layout[i] === 1) {
@@ -68,7 +64,6 @@ function createBoard() {
         }
     }
 }
-
 createBoard()
 
 
@@ -84,41 +79,26 @@ squares[pacmanCurrentIndex].classList.add("pacman")
 function control(e) {
     squares[pacmanCurrentIndex].classList.remove("pacman")
     switch (e.keyCode) {
-        case 40:
-            console.log("down pressed")
+        case 40:    // down
             if (!squares[pacmanCurrentIndex + width].classList.contains("wall") &&
                 !squares[pacmanCurrentIndex + width].classList.contains("ghost-lair") &&
                 pacmanCurrentIndex + width < width * width
             )
                 pacmanCurrentIndex += width
-
-            pacmanTimerId = setInterval(function () {
-                // if the next square does NOT contain a wall and does not contain a ghost
-                if (
-                    !squares[pacmanCurrentIndex + direction].classList.contains("wall")
-                ) {
-                    // add direction to current index
-                    pacmanCurrentIndex += width
-                    // add ghost class
-                }
-            }, pacmanSpeed)
             break
 
-        case 38:
-            console.log("up pressed")
+        case 38:    // up
             if (!squares[pacmanCurrentIndex - width].classList.contains("wall") &&
                 pacmanCurrentIndex - 28 >= 0
             )
                 pacmanCurrentIndex -= width
             break
 
-        case 37:
-            console.log("left pressed")
+        case 37:    // left
             if (!squares[pacmanCurrentIndex - 1].classList.contains("wall") &&
                 pacmanCurrentIndex % width !== 0
             )
                 pacmanCurrentIndex -= 1
-
 
             // shortcut
             if (pacmanCurrentIndex === 392) {
@@ -126,8 +106,7 @@ function control(e) {
             }
             break
 
-        case 39:
-            console.log("right pressed")
+        case 39:    // right
             if (!squares[pacmanCurrentIndex + 1].classList.contains("wall") &&
                 pacmanCurrentIndex % width < width - 1
             )
@@ -149,9 +128,11 @@ document.addEventListener("keydown", control)
 
 
 function pacDotEaten() {
+    // if square pacman is in a square with a pac-dot
     if (squares[pacmanCurrentIndex].classList.contains("pac-dot")) {
         squares[pacmanCurrentIndex].classList.remove("pac-dot")
         score += 1
+        pacdot += 1
         scoreDisplay.innerHTML = score
     }
 }
@@ -174,7 +155,7 @@ function unScareGhosts() {
     ghosts.forEach(ghost => ghost.isScared = false)
 }
 
-
+// define ghosts
 class Ghost {
     constructor(className, startIndex, speed) {
         this.className = className
@@ -186,6 +167,7 @@ class Ghost {
     }
 }
 
+// ghost attributes
 const ghosts = [
     new Ghost("Blinky", 376, 250),
     new Ghost("Pinky", 404, 400),
@@ -245,33 +227,6 @@ function moveGhosts(ghost) {
 
 }
 
-const pacmanDirections = [+1, -1, +width, -width]
-
-function movePacman() {
-    const directions = [+1, -1, +width, -width]
-    let direction = directions[Math.floor(Math.random() * directions.length)]
-
-    pacmanTimerId = setInterval(function () {
-        // if the next square does NOT contain a wall and does not contain a ghost
-        if (
-            !squares[pacmanCurrentIndex + direction].classList.contains("wall")
-        ) {
-            // remove any ghost
-            squares[pacmanCurrentIndex].classList.remove("pacman")
-            // add direction to current index
-            pacmanCurrentIndex += direction
-            // add ghost class
-            squares[pacmanCurrentIndex].classList.add("pacman")
-        } else direction = directions[Math.floor(Math.random() * directions.length)]
-        powerPelletEaten()
-        checkForWin()
-        checkForGameOver()
-    }, pacmanSpeed)
-
-}
-// movePacman()
-
-// check for game over
 function checkForGameOver() {
     //if the square pacman is in contains a ghost AND the square does NOT contain a scared ghost 
     if (squares[pacmanCurrentIndex].classList.contains("ghost") &&
@@ -287,14 +242,13 @@ function checkForGameOver() {
 
 }
 
-// check for win
 function checkForWin() {
-    if (score >= 286) {
-        //stop each ghost
+    if (pacdot === 286) {
+        // stop each ghost
         ghosts.forEach(ghost => clearInterval(ghost.timerId))
-        //remove the eventListener for the control function
+        // remove the eventListener for the control function
         document.removeEventListener("keydown", control)
-        //tell our user we have won
+        // tell our user we have won
         scoreDisplay.innerHTML = score
         document.getElementById("overlay-win").style.display = "block"
     }
